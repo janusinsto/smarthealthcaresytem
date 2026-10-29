@@ -1,0 +1,148 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f3f5f9;color:#1d2738}
+
+.app{
+    display:flex;min-height:100vh
+}aside
+{   width:230px;
+    background:#18243d;
+    color:white;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:10px}
+    aside b{font-size:28px}
+    aside span{
+        color:#cbd5e1;
+        font-size:13px
+        ;margin:5px 0 15px}
+        aside button{
+            padding:11px;
+            border:0;
+            border-radius:7px;
+            background:transparent;
+            color:white;
+            text-align:left}
+            aside button:hover{
+                background:#2a3b60
+            }main
+            {padding:30px;
+                max-width:1100px;
+                width:100%
+            }section,.form,.cards i{
+                background:white;
+                padding:20px;
+                border-radius:12px;
+                box-shadow:0 2px 12px #0001;
+                margin-bottom:18px
+            }
+                .cards{
+                    display:grid;
+                    grid-template-columns:
+                    repeat(4,1fr);
+                    gap:15px
+                }
+                
+                .cards i {
+                    font-style:normal;
+                    display:flex;
+                    flex-direction:column;
+                    gap:8px
+                }
+                .cards b{
+                    font-size:28px
+                }
+                .form{
+                    display:grid;
+                    grid-template-columns:repeat(3,1fr);
+                    gap:10px
+                }
+                input,select{
+                    padding:10px;
+                    border:1px solid #ccd3df;
+                    border-radius:7px
+                }
+                    button{
+                        background:#3159a5;
+                        color:white;
+                        border:0;
+                        border-radius:7px;
+                        padding:10px;
+                        cursor:pointer}
+                        table
+                        
+                        {
+                            width:100%;
+                            border-collapse:collapse
+                        }
+                        th,td {
+                            text-align:left;
+                            padding:10px;
+                            border-bottom:1px solid #e5e7eb}
+                            pre{
+                                background:#111827;
+                                color:#d1fae5;padding:15px;
+                                overflow:auto
+                            }
+                            
+                            .login{
+                                min-height:100vh;display:grid;
+                                place-items:center;
+                                background:#eef2f8
+                            }
+                            
+                            .login form{
+                                background:white;
+                                padding:30px;
+                                border-radius:14px;
+                                width:min(400px,90vw);
+                                display:flex;flex-direction:column;
+                                gap:12px
+                            }
+                            
+                            .login h1{margin:0}
+
+                            .login small{color:#6b7280}
+
+                            .err{
+                                color:#a22;
+                                background:#fee2e2;
+                                padding:8px
+                            }
+                                @media(max-width:800px){
+                                    
+                                    .cards,.form{
+                                        grid-template-columns:1fr 1fr}
+                                        
+                                        .app{flex-direction:column}
+                                        
+                                        aside{width:100%}
+                                    
+                                    }
+                                    
+                                    @media(max-width:550px){.cards,.form{grid-template-columns:1fr}main{padding:15px}
+                                }
+                                 
+                                
+.login .success {
+  color: #166534;
+  background: #dcfce7;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.login .link-button {
+  display: inline;
+  width: auto;
+  padding: 0;
+  background: transparent;
+  color: #3159a6;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.login button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
