@@ -1,0 +1,13 @@
+USE smart_healthcare;
+CREATE OR REPLACE VIEW vw_appointment_details AS SELECT a.appointment_id,a.appointment_datetime,a.status,a.reason,p.patient_code,p.full_name patient_name,d.doctor_id,u.full_name doctor_name,dep.department_name FROM appointments a JOIN patients p ON p.patient_id=a.patient_id JOIN doctors d ON d.doctor_id=a.doctor_id JOIN users u ON u.user_id=d.user_id JOIN departments dep ON dep.department_id=d.department_id;
+CREATE OR REPLACE VIEW vw_patient_billing AS SELECT i.invoice_id,p.patient_code,p.full_name patient_name,i.invoice_date,i.total_amount,i.status FROM invoices i JOIN patients p ON p.patient_id=i.patient_id;
+CREATE OR REPLACE VIEW vw_doctor_schedule AS SELECT s.schedule_id,d.doctor_id,u.full_name doctor_name,dep.department_name,s.day_of_week,s.start_time,s.end_time,s.room FROM doctor_schedules s JOIN doctors d ON d.doctor_id=s.doctor_id JOIN users u ON u.user_id=d.user_id JOIN departments dep ON dep.department_id=d.department_id;
+CREATE TABLE appointment_audit(audit_id INT AUTO_INCREMENT PRIMARY KEY,appointment_id INT,old_status VARCHAR(20),new_status VARCHAR(20),changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE invoice_item_audit(audit_id INT AUTO_INCREMENT PRIMARY KEY,invoice_item_id INT,action_name VARCHAR(20),changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+DELIMITER //
+CREATE PROCEDURE sp_patient_appointment_history(IN pid INT) BEGIN SELECT a.appointment_id,a.appointment_datetime,a.status,u.full_name doctor_name,a.reason FROM appointments a JOIN doctors d ON d.doctor_id=a.doctor_id JOIN users u ON u.user_id=d.user_id WHERE a.patient_id=pid ORDER BY a.appointment_datetime DESC; END //
+CREATE PROCEDURE sp_update_appointment_status(IN aid INT,IN newstatus VARCHAR(20)) BEGIN IF newstatus NOT IN('Pending','Confirmed','Completed','Cancelled') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Invalid status'; END IF; UPDATE appointments SET status=newstatus WHERE appointment_id=aid; END //
+CREATE PROCEDURE sp_invoice_total(IN iid INT) BEGIN SELECT i.invoice_id,COALESCE(SUM(ii.quantity*ii.unit_price),0) calculated_total FROM invoices i LEFT JOIN invoice_items ii ON ii.invoice_id=i.invoice_id WHERE i.invoice_id=iid GROUP BY i.invoice_id; END //
+CREATE TRIGGER trg_appointment_status AFTER UPDATE ON appointments FOR EACH ROW BEGIN IF NOT(OLD.status <=> NEW.status) THEN INSERT INTO appointment_audit(appointment_id,old_status,new_status) VALUES(OLD.appointment_id,OLD.status,NEW.status); END IF; END //
+CREATE TRIGGER trg_invoice_item_insert AFTER INSERT ON invoice_items FOR EACH ROW BEGIN INSERT INTO invoice_item_audit(invoice_item_id,action_name) VALUES(NEW.invoice_item_id,'INSERT'); END //
+DELIMITER ;
